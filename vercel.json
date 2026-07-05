@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "https://uski-api-6f7g009f.fastapicloud.dev/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
