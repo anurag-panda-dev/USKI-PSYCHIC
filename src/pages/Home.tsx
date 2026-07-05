@@ -8,13 +8,14 @@ import KillerCard from "../components/KillerCard";
 
 export default function Home() {
   const [featured, setFeatured] = useState<Killer[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       try {
         const data = await fetchKillers();
-        // Sort by psycho_killer_score descending and pick top 3
+        setTotalCount(data.length);
         const sorted = [...data].sort((a, b) => b.psycho_killer_score - a.psycho_killer_score);
         setFeatured(sorted.slice(0, 3));
       } catch (err) {
@@ -28,12 +29,9 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen bg-zinc-950 text-zinc-100 overflow-hidden">
-      {/* Cinematic Vignette Overlay */}
       <div className="absolute inset-0 psychic-vignette pointer-events-none z-10" />
-      {/* Textured Film Grain Overlay */}
       <div className="absolute inset-0 psychic-grain pointer-events-none z-10" />
 
-      {/* HERO SECTION */}
       <section className="relative z-20 pt-20 pb-16 md:pt-32 md:pb-24 px-4 sm:px-6 lg:px-8 border-b border-zinc-900 bg-gradient-to-b from-zinc-950 via-zinc-900/10 to-zinc-950">
         <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
           
@@ -95,7 +93,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* HISTORIC ANALYSIS SUMMARY STATS */}
       <section className="relative z-20 py-12 px-4 sm:px-6 lg:px-8 border-b border-zinc-900">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -103,7 +100,7 @@ export default function Home() {
             <div className="flex items-center gap-4 p-6 rounded-2xl bg-zinc-900/30 border border-zinc-900 backdrop-blur-xs">
               <Database className="h-8 w-8 text-zinc-500" />
               <div className="flex flex-col">
-                <span className="font-mono text-xl font-bold text-zinc-200">8 DETAILED</span>
+                <span className="font-mono text-xl font-bold text-zinc-200">{totalCount} TOTAL</span>
                 <span className="font-mono text-[9px] tracking-widest text-zinc-500 uppercase">
                   HISTORICAL CASE FILES
                 </span>
@@ -134,7 +131,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FEATURED COLLECTIBLES GRIDS */}
       <section className="relative z-20 py-20 px-4 sm:px-6 lg:px-8 bg-zinc-950">
         <div className="max-w-7xl mx-auto">
           
@@ -158,7 +154,6 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Featured Cards list loading / displaying */}
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
               {[1, 2, 3].map((n) => (
@@ -186,7 +181,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ETHICAL RESPONSIBILITY INTRO BLOCK */}
       <section className="relative z-20 py-16 px-4 sm:px-6 lg:px-8 border-t border-zinc-900 bg-zinc-950">
         <div className="max-w-4xl mx-auto rounded-2xl border border-zinc-900 bg-zinc-900/10 p-8 sm:p-10 backdrop-blur-xs flex flex-col sm:flex-row items-start gap-6">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400">

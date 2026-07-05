@@ -5,14 +5,16 @@ import { Killer } from "../types";
 import SearchBar from "../components/SearchBar";
 import FilterControls from "../components/FilterControls";
 import KillerCard from "../components/KillerCard";
-import { AlertCircle, EyeOff, Sliders } from "lucide-react";
+import { AlertCircle, EyeOff, ChevronLeft, ChevronRight } from "lucide-react";
+
+const ITEMS_PER_PAGE = 24;
 
 export default function Explore() {
   const [killers, setKillers] = useState<Killer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // Filter States
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("");
   const [minScore, setMinScore] = useState(50);
@@ -33,20 +35,21 @@ export default function Explore() {
     load();
   }, []);
 
-  // Compute unique countries dynamically based on loaded data
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCountry, minScore]);
+
   const countries = useMemo(() => {
     const list = killers.map((k) => k.country).filter(Boolean);
     return Array.from(new Set(list)).sort();
   }, [killers]);
 
-  // Handle resets
   const handleResetFilters = () => {
     setSearchTerm("");
     setSelectedCountry("");
     setMinScore(50);
   };
 
-  // Perform filtering logic
   const filteredKillers = useMemo(() => {
     return killers.filter((k) => {
       const knownAsStr = Array.isArray(k.known_as)
@@ -61,22 +64,31 @@ export default function Explore() {
         (k.method?.toLowerCase() || "").includes(searchTerm.toLowerCase());
 
       const matchesCountry = selectedCountry ? k.country === selectedCountry : true;
-
       const matchesScore = k.psycho_killer_score >= minScore;
 
       return matchesSearch && matchesCountry && matchesScore;
     });
   }, [killers, searchTerm, selectedCountry, minScore]);
 
+  const totalPages = Math.max(1, Math.ceil(filteredKillers.length / ITEMS_PER_PAGE));
+  const safePage = Math.min(currentPage, totalPages);
+  const paginatedKillers = filteredKillers.slice(
+    (safePage - 1) * ITEMS_PER_PAGE,
+    safePage * ITEMS_PER_PAGE
+  );
+
+  const goToPage = (page: number) => {
+    const next = Math.max(1, Math.min(page, totalPages));
+    setCurrentPage(next);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <div className="relative min-h-screen bg-zinc-950 text-zinc-100 py-12 px-4 sm:px-6 lg:px-8">
-      {/* Cinematic Overlays */}
       <div className="absolute inset-0 psychic-vignette pointer-events-none z-10" />
       <div className="absolute inset-0 psychic-grain pointer-events-none z-10" />
 
       <div className="relative z-20 max-w-7xl mx-auto flex flex-col gap-8">
-        
-        {/* Header Title */}
         <div className="border-b border-zinc-900 pb-6">
           <span className="font-mono text-[10px] tracking-widest text-zinc-500 uppercase block mb-1.5">
             USKI DIGITAL REGISTRY
@@ -87,9 +99,11 @@ export default function Explore() {
           <p className="font-sans text-xs md:text-sm text-zinc-400 mt-2 max-w-2xl leading-relaxed">
             Interrogate the complete catalog of analyzed subjects. Filter cases by operational country or adjust the minimum Psycho Killer Score index below.
           </p>
+          <p className="font-mono text-[11px] text-zinc-500 mt-2">
+            TOTAL RECORDS: {killers.length} | MATCHING: {filteredKillers.length}
+          </p>
         </div>
 
-        {/* Filter Controls Panels */}
         <div className="flex flex-col gap-4">
           <SearchBar value={searchTerm} onChange={setSearchTerm} />
           
@@ -103,7 +117,6 @@ export default function Explore() {
           />
         </div>
 
-        {/* ACTIVE FILTER SUMMARY INDICATOR BAR */}
         {(searchTerm || selectedCountry || minScore > 50) && (
           <div className="flex flex-wrap items-center gap-2 py-2 px-4 bg-zinc-900/30 border border-zinc-900 rounded-lg text-xs text-zinc-400">
             <span className="font-mono text-[10px] uppercase text-zinc-500">Active Criteria:</span>
@@ -113,7 +126,6 @@ export default function Explore() {
           </div>
         )}
 
-        {/* GRID CONTAINER */}
         <div className="mt-4">
           {error ? (
             <div className="flex flex-col items-center justify-center text-center p-12 bg-red-950/20 border border-red-900/40 rounded-2xl">
@@ -137,7 +149,7 @@ export default function Explore() {
                 </div>
               ))}
             </div>
-          ) : filteredKillers.length === 0 ? (
+          ) : paginatedKillers.length === 0 ? (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -158,13 +170,41 @@ export default function Explore() {
               </button>
             </motion.div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 justify-items-center">
-              <AnimatePresence mode="popLayout">
-                {filteredKillers.map((killer) => (
-                  <KillerCard key={killer.id} killer={killer} />
-                ))}
-              </AnimatePresence>
-            </div>
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 justify-items-center">
+                <AnimatePresence mode="popLayout">
+                  {paginatedKillers.map((killer) => (
+                    <KillerCard key={killer.id} killer={killer} />
+                  ))}
+                </AnimatePresence>
+              </div>
+
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-3 mt-10">
+                  <button
+                    type="button"
+                    onClick={() => goToPage(safePage - 1)}
+                    disabled={safePage === 1}
+                    className="inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-300 hover:text-white hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed font-mono text-xs tracking-wider uppercase"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Prev
+                  </button>
+                  <span className="font-mono text-xs text-zinc-400">
+                    PAGE {safePage} / {totalPages}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => goToPage(safePage + 1)}
+                    disabled={safePage === totalPages}
+                    className="inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-300 hover:text-white hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed font-mono text-xs tracking-wider uppercase"
+                  >
+                    Next
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
 
