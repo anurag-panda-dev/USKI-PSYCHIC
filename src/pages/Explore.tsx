@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { fetchKillers } from "../data/api";
+import { fetchKillers } from "../lib/api";
 import { Killer } from "../types";
 import SearchBar from "../components/SearchBar";
 import FilterControls from "../components/FilterControls";

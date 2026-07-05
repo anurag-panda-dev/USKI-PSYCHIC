@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { Shield, Sparkles, Database, ArrowRight, Eye, ShieldAlert } from "lucide-react";
 import { Killer } from "../types";
-import { fetchKillers } from "../data/api";
+import { fetchKillers } from "../lib/api";
 import KillerCard from "../components/KillerCard";
 
 export default function Home() {

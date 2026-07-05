@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { fetchKillerById, fetchKillerScore } from "../data/api";
+import { fetchKillerById, fetchKillerScore } from "../lib/api";
 import { Killer, ScoreResponse } from "../types";
 import CaseDetail from "../components/CaseDetail";
 import { AlertCircle, ArrowLeft, Loader2 } from "lucide-react";
