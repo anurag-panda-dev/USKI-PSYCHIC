@@ -1,0 +1,6 @@
+{
+  "name": "USKI Archive",
+  "description": "A premium, atmospheric digital archive of USKI case files styled with collectible cards and deep psychic-climate aesthetics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
