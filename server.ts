@@ -12,8 +12,11 @@ async function startServer() {
   // API proxy routes
   app.get("/api/killers", async (req, res) => {
     try {
-      console.log("Proxying request: GET /api/killers");
-      const response = await fetch("https://uski-api-6f7f009f.fastapicloud.dev/killers");
+      console.log("Proxying request: GET /api/killers", req.query);
+      const targetUrl = new URL("https://uski-api-6f7f009f.fastapicloud.dev/killers");
+      if (req.query.limit) targetUrl.searchParams.set("limit", req.query.limit as string);
+      if (req.query.offset) targetUrl.searchParams.set("offset", req.query.offset as string);
+      const response = await fetch(targetUrl.toString());
       if (!response.ok) {
         console.error(`Backend API error on /killers: ${response.status}`);
         return res.status(response.status).json({ error: `Backend API returned status ${response.status}` });

@@ -3,7 +3,7 @@ import { Killer, ScoreResponse } from "../types";
 const API_BASE = "/api";
 
 export async function fetchKillers(): Promise<Killer[]> {
-  const res = await fetch(`${API_BASE}/killers`);
+  const res = await fetch(`${API_BASE}/killers?limit=1000`);
   if (!res.ok) throw new Error(`Failed to fetch killers: ${res.statusText}`);
   return res.json();
 }
