@@ -1,4 +1,4 @@
-# USKI Psychic Climate Archive
+# THE USKI PSYCHIC CLIMATE INDEX
 
 A modern, premium digital archive and interactive case registry frontend for the USKI API. Designed with a **“psychic climate” visual style**: atmospheric, editorial, slightly eerie, high-contrast, cinematic, and polished.
 
