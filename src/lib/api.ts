@@ -1,6 +1,6 @@
 import { Killer, ScoreResponse } from "../types";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
+const API_BASE = "/api";
 
 export async function fetchKillers(): Promise<Killer[]> {
   const res = await fetch(`${API_BASE}/killers`);

@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://uski-api-6f7g009f.fastapicloud.dev/:path*"
+      "destination": "https://uski-api-6f7f009f.fastapicloud.dev/:path*"
     },
     {
       "source": "/(.*)",
