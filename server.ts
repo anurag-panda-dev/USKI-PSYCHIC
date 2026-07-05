@@ -18,6 +18,11 @@ async function startServer() {
         console.error(`Backend API error on /killers: ${response.status}`);
         return res.status(response.status).json({ error: `Backend API returned status ${response.status}` });
       }
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        console.error(`Backend API returned non-JSON response with content-type: ${contentType}`);
+        return res.status(500).json({ error: "Backend API returned non-JSON response" });
+      }
       const data = await response.json();
       res.json(data);
     } catch (error: any) {
@@ -34,6 +39,11 @@ async function startServer() {
         console.error(`Backend API error on /killers/${req.params.id}: ${response.status}`);
         return res.status(response.status).json({ error: `Backend API returned status ${response.status}` });
       }
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        console.error(`Backend API returned non-JSON response with content-type: ${contentType}`);
+        return res.status(500).json({ error: "Backend API returned non-JSON response" });
+      }
       const data = await response.json();
       res.json(data);
     } catch (error: any) {
@@ -49,6 +59,11 @@ async function startServer() {
       if (!response.ok) {
         console.error(`Backend API error on /killers/${req.params.id}/score: ${response.status}`);
         return res.status(response.status).json({ error: `Backend API returned status ${response.status}` });
+      }
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        console.error(`Backend API returned non-JSON response with content-type: ${contentType}`);
+        return res.status(500).json({ error: "Backend API returned non-JSON response" });
       }
       const data = await response.json();
       res.json(data);
